@@ -2,10 +2,11 @@ require("dotenv").config();
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const express = require("express");
+const pool = require("./db");
 const OAuth2 = google.auth.OAuth2;
 const cors = require("cors");
 const app = express();
-const port = 5000;
+const port = 5001;
 
 app.use(cors());
 app.use(express.json({ limit: "25mb" }));
@@ -70,6 +71,105 @@ app.post("/send_email", (req, res) => {
   sendEmail(req.body.userEmail)
     .then((response) => res.send(response.message))
     .catch((error) => res.status(500).send(error.message));
+});
+
+//Add a item
+app.post("/items", async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      type,
+      isLost,
+      location,
+      date,
+      itemDate,
+      email,
+      image,
+    } = req.body;
+
+    const item = await pool.query(
+      "INSERT INTO items (name, description, type, isLost, location, date, itemDate, email, image) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+      [name, description, type, isLost, location, date, itemDate, email, image]
+    );
+
+    res.json(item.rows[0]);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//Get all items
+app.get("/items", async (req, res) => {
+  try {
+    const allItems = await pool.query("SELECT * FROM items");
+    res.json(allItems.rows);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//Get a item
+app.get("/items/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await pool.query("SELECT * FROM items WHERE id=$1", [id]);
+    res.json(item.rows[0]);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//Update a item
+app.put("/items/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      description,
+      type,
+      isLost,
+      location,
+      date,
+      itemDate,
+      email,
+      image,
+    } = req.body;
+
+    const item = await pool.query(
+      "UPDATE items SET name=$1, description=$2, type=$3, isLost=$4, location=$5, date=$6, itemDate=$7, email=$8, image=$9 WHERE id=$10 RETURNING *",
+      [
+        name,
+        description,
+        type,
+        isLost,
+        location,
+        date,
+        itemDate,
+        email,
+        image,
+        id,
+      ]
+    );
+
+    res.json(item.rows[0]);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+//Delete a item
+app.delete("/items/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedItem = await pool.query(
+      "DELETE FROM items WHERE id=$1 RETURNING *",
+      [id]
+    );
+    res.json(deletedItem.rows[0]);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 app.listen(port, () => {
