@@ -2,7 +2,7 @@ const express = require("express");
 
 const itemsRouter = express.Router();
 
-const pool = require("../db");
+const pool = require("../server/db");
 
 //Add a item
 itemsRouter.post("/", async (req, res) => {
