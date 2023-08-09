@@ -1,10 +1,20 @@
 const Pool = require("pg").Pool;
+const pgp = require("pg-promise")({});
+
 const pool = new Pool({
-  user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD,
-  host: process.env.PG_HOST,
-  port: process.env.PG_PORT,
-  database: process.env.PG_DB_NAME,
+  user: process.env.AWS_USER,
+  password: process.env.AWS_PASSWORD,
+  host: process.env.AWS_HOST,
+  port: process.env.AWS_PORT,
+  database: process.env.AWS_DB_NAME,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-module.exports = pool;
+// const cn = `postgres://${process.env.AWS_USER}:${encodeURIComponent(
+//   process.env.AWS_PASSWORD
+// )}@${process.env.AWS_HOST}:${process.env.AWS_PORT}/${process.env.AWS_DB_NAME}`; // For pgp
+// const db = pgp(cn);
+
+module.exports = pool ;
