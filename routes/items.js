@@ -11,7 +11,7 @@ itemsRouter.post("/", async (req, res) => {
       name,
       description,
       type,
-      isLost,
+      islost,
       location,
       date,
       itemDate,
@@ -20,8 +20,8 @@ itemsRouter.post("/", async (req, res) => {
     } = req.body;
 
     const item = await pool.query(
-      "INSERT INTO items (name, description, type, isLost, location, date, itemDate, email, image) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
-      [name, description, type, isLost, location, date, itemDate, email, image]
+      "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+      [name, description, type, islost, location, date, itemDate, email, image]
     );
 
     res.json(item.rows[0]);
@@ -59,7 +59,7 @@ itemsRouter.put("/:id", async (req, res) => {
       name,
       description,
       type,
-      isLost,
+      islost,
       location,
       date,
       itemDate,
@@ -68,12 +68,12 @@ itemsRouter.put("/:id", async (req, res) => {
     } = req.body;
 
     const item = await pool.query(
-      "UPDATE items SET name=$1, description=$2, type=$3, isLost=$4, location=$5, date=$6, itemDate=$7, email=$8, image=$9 WHERE id=$10 RETURNING *",
+      "UPDATE items SET name=$1, description=$2, type=$3, islost=$4, location=$5, date=$6, itemDate=$7, email=$8, image=$9 WHERE id=$10 RETURNING *",
       [
         name,
         description,
         type,
-        isLost,
+        islost,
         location,
         date,
         itemDate,

@@ -5,10 +5,10 @@ CREATE TABLE items (
     name VARCHAR(255),
     description VARCHAR(500),
     type VARCHAR(50),
-    location INT[],
+    location FLOAT[],
     date VARCHAR(255),
     itemDate VARCHAR(50),
     email VARCHAR(255),
     image VARCHAR(500),
-    isLost BOOLEAN
+    islost BOOLEAN
 );
