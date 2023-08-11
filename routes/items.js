@@ -40,6 +40,14 @@ itemsRouter.get("/", async (req, res) => {
   }
 });
 
+itemsRouter.get("/lol", async (req, res) => {
+  try {
+    res.json("HI");
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 //Get a item
 itemsRouter.get("/:id", async (req, res) => {
   try {
