@@ -59,6 +59,19 @@ itemsRouter.get("/:id", async (req, res) => {
   }
 });
 
+// Retrieve Items by Category
+itemsRouter.get("/category/:category", async (req, res) => {
+  try {
+    const { category } = req.params;
+    const items = await pool.query("SELECT * FROM items WHERE type=$1", [
+      category,
+    ]);
+    res.json(items.rows);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 //Update a item
 itemsRouter.put("/:id", async (req, res) => {
   try {

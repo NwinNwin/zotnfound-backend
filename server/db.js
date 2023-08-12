@@ -17,4 +17,4 @@ const pool = new Pool({
 // )}@${process.env.AWS_HOST}:${process.env.AWS_PORT}/${process.env.AWS_DB_NAME}`; // For pgp
 // const db = pgp(cn);
 
-module.exports = pool ;
+module.exports = pool;
