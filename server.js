@@ -16,6 +16,13 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/" , async (req, res) => {
+  try {
+    res.json("Hello");
+  } catch (error) {
+    console.error(error);
+  }
+});
 app.use("/items", items);
 app.use("/nodemailer", nodemailer);
 
