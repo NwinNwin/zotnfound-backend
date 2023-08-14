@@ -1,4 +1,5 @@
 const express = require("express");
+const sendEmail = require("../utils");
 
 const itemsRouter = express.Router();
 
@@ -23,6 +24,24 @@ itemsRouter.post("/", async (req, res) => {
       "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [name, description, type, islost, location, date, itemDate, email, image]
     );
+
+    // Check for nearby items
+    const nearbyItems = await pool.query(
+      "SELECT email, name, id FROM items WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(location[2], location[1]), 4326)::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, 120) AND id != $3 AND islost != $4 AND type = $5",
+      [location[1], location[0], item.rows[0].id, islost, type]
+    );
+
+    // If there are nearby items, send an email
+    if (nearbyItems.rowCount > 0) {
+      // Loop through the nearby items and send emails. This assumes you want to notify all nearby item owners.
+      for (let nearbyItem of nearbyItems.rows) {
+        sendEmail(
+          nearbyItem.email,
+          "A nearby item was added!",
+          `${name} is near your item ${nearbyItem.name}: ${nearbyItem.id}`
+        );
+      }
+    }
 
     res.json(item.rows[0]);
   } catch (error) {
