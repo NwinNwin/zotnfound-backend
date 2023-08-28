@@ -28,9 +28,14 @@ itemsRouter.post("/", async (req, res) => {
     );
 
     // Check for nearby items
+    // const nearbyItems = await pool.query(
+    //   "SELECT email, name, id FROM items WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(location[2], location[1]), 4326)::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, 120) AND id != $3 AND islost != $4 AND type = $5",
+    //   [location[1], location[0], item.rows[0].id, islost, type]
+    // );
+
     const nearbyItems = await pool.query(
-      "SELECT email, name, id FROM items WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(location[2], location[1]), 4326)::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, 120) AND id != $3 AND islost != $4 AND type = $5",
-      [location[1], location[0], item.rows[0].id, islost, type]
+      "SELECT email, name, id FROM items WHERE type=$1",
+      [type]
     );
 
     // If there are nearby items, send an email
