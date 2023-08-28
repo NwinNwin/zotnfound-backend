@@ -1,10 +1,12 @@
 const express = require("express");
 const sendEmail = require("../utils");
+const fs = require("fs");
 
 const itemsRouter = express.Router();
 
 const pool = require("../server/db");
-
+const template = fs.readFileSync("./email-template/index.html", "utf-8");
+sendEmail("katyhuang360166@gmail.com", "OKOOKO", template);
 //Add a item
 itemsRouter.post("/", async (req, res) => {
   try {
@@ -35,10 +37,20 @@ itemsRouter.post("/", async (req, res) => {
     if (nearbyItems.rowCount > 0) {
       // Loop through the nearby items and send emails. This assumes you want to notify all nearby item owners.
       for (let nearbyItem of nearbyItems.rows) {
+        // Replace placeholders with dynamic content
+        const dynamicContent = {
+          content: `${name} is near your item ${nearbyItem.name}: ${nearbyItem.id}`,
+        };
+
+        const customizedTemplate = template.replace(
+          "{{content}}",
+          dynamicContent.content
+        );
+
         sendEmail(
           nearbyItem.email,
           "A nearby item was added!",
-          `${name} is near your item ${nearbyItem.name}: ${nearbyItem.id}`
+          customizedTemplate
         );
       }
     }

@@ -6,7 +6,7 @@ const sendEmail = async (recipientEmail, subject, content) => {
     from: process.env.EMAIL,
     to: recipientEmail,
     subject: subject,
-    text: content,
+    html: content,
   });
 };
 
