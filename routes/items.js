@@ -6,7 +6,7 @@ const itemsRouter = express.Router();
 
 const pool = require("../server/db");
 const template = fs.readFileSync("./email-template/index.html", "utf-8");
-sendEmail("katyhuang360166@gmail.com", "OKOOKO", template);
+
 //Add a item
 itemsRouter.post("/", async (req, res) => {
   try {
