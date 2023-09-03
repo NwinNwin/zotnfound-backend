@@ -27,37 +27,29 @@ itemsRouter.post("/", async (req, res) => {
       [name, description, type, islost, location, date, itemDate, email, image]
     );
 
-    // Check for nearby items
-    // const nearbyItems = await pool.query(
-    //   "SELECT email, name, id FROM items WHERE ST_DWithin(ST_SetSRID(ST_MakePoint(location[2], location[1]), 4326)::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, 120) AND id != $3 AND islost != $4 AND type = $5",
-    //   [location[1], location[0], item.rows[0].id, islost, type]
-    // );
-
     const nearbyItems = await pool.query(
-      "SELECT email, name, id FROM items WHERE type=$1",
-      [type]
+      "SELECT DISTINCT email FROM items WHERE type=$1 AND islost=$2",
+      [type, !islost]
     );
 
-    // If there are nearby items, send an email
-    if (nearbyItems.rowCount > 0) {
-      // Loop through the nearby items and send emails. This assumes you want to notify all nearby item owners.
-      for (let nearbyItem of nearbyItems.rows) {
-        // Replace placeholders with dynamic content
-        const dynamicContent = {
-          content: `${name} is near your item ${nearbyItem.name}: ${nearbyItem.id}`,
-        };
+    let contentString = "";
 
-        const customizedTemplate = template.replace(
-          "{{content}}",
-          dynamicContent.content
-        );
+    for (let i = 0; i < nearbyItems.rows.length; i++) {
+      let email = nearbyItems.rows[i].email;
+      contentString += `A new added item, ${name}, is near your items!`;
 
-        sendEmail(
-          nearbyItem.email,
-          "A nearby item was added!",
-          customizedTemplate
-        );
-      }
+      const dynamicContent = {
+        content: contentString,
+        image: image,
+      };
+
+      const customizedTemplate = template
+        .replace("{{content}}", dynamicContent.content)
+        .replace("{{image}}", dynamicContent.image);
+
+      sendEmail(email, "A nearby item was added!", customizedTemplate);
+
+      contentString = "";
     }
 
     res.json(item.rows[0]);
