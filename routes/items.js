@@ -50,7 +50,6 @@ itemsRouter.post("/", async (req, res) => {
         .replace("{{url}}", dynamicContent.url);
 
       sendEmail(email, "A nearby item was added!", customizedTemplate);
-      console.log("sent email to", email)
 
       contentString = "";
     }
