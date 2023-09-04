@@ -41,13 +41,16 @@ itemsRouter.post("/", async (req, res) => {
       const dynamicContent = {
         content: contentString,
         image: image,
+        url: `https://zotnfound.com/${item.rows[0].id}`,
       };
 
       const customizedTemplate = template
         .replace("{{content}}", dynamicContent.content)
-        .replace("{{image}}", dynamicContent.image);
+        .replace("{{image}}", dynamicContent.image)
+        .replace("{{url}}", dynamicContent.url);
 
       sendEmail(email, "A nearby item was added!", customizedTemplate);
+      console.log("sent email to", email)
 
       contentString = "";
     }
