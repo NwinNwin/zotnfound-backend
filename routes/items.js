@@ -28,11 +28,12 @@ itemsRouter.post("/", async (req, res) => {
     );
 
     const nearbyItems = await pool.query(
-      "SELECT DISTINCT email FROM items WHERE type=$1 AND islost=$2",
-      [type, !islost]
+      "SELECT DISTINCT email FROM items WHERE type=$1 AND islost=$2 AND email!=$3",
+      [type, !islost, email]
     );
 
     let contentString = "";
+    console.log(nearbyItems.rows)
 
     for (let i = 0; i < nearbyItems.rows.length; i++) {
       let email = nearbyItems.rows[i].email;
