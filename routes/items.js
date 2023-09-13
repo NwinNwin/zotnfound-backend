@@ -1,12 +1,11 @@
 const express = require("express");
 const sendEmail = require("../utils");
 const fs = require("fs");
-
 const itemsRouter = express.Router();
 
 const pool = require("../server/db");
 const template = fs.readFileSync("./email-template/index.html", "utf-8");
-
+const isPositionWithinBounds = require("../util/inbound");
 //Add a item
 itemsRouter.post("/", async (req, res) => {
   try {
@@ -22,6 +21,9 @@ itemsRouter.post("/", async (req, res) => {
       image,
     } = req.body;
 
+    if (!isPositionWithinBounds(location[0], location[1])) {
+      res.json("ITEM OUT OF BOUNDS (UCI ONLY)");
+    }
     const item = await pool.query(
       "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [name, description, type, islost, location, date, itemDate, email, image]
@@ -33,7 +35,6 @@ itemsRouter.post("/", async (req, res) => {
     );
 
     let contentString = "";
-    console.log(nearbyItems.rows)
 
     for (let i = 0; i < nearbyItems.rows.length; i++) {
       let email = nearbyItems.rows[i].email;
