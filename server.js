@@ -7,6 +7,7 @@ const port = 3001;
 // ROUTES
 const items = require("./routes/items");
 const nodemailer = require("./routes/nodeMailer");
+const leaderboard = require("./routes/leaderboard")
 
 app.use(cors());
 app.use(express.json({ limit: "25mb" }));
@@ -24,6 +25,7 @@ app.get("/", async (req, res) => {
   }
 });
 app.use("/items", items);
+app.use("/leaderboard", leaderboard)
 app.use("/nodemailer", nodemailer);
 
 app.listen(port, () => {
