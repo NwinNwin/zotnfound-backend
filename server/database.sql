@@ -14,3 +14,9 @@ CREATE TABLE items (
     isResolved BOOLEAN,
     isHelped BOOLEAN NULL
 );
+
+CREATE TABLE leaderboard(
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255),
+    points INTEGER
+)

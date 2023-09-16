@@ -26,6 +26,13 @@ itemsRouter.post("/", async (req, res) => {
     if (!isPositionWithinBounds(location[0], location[1])) {
       res.json("ITEM OUT OF BOUNDS (UCI ONLY)");
     }
+
+    
+
+    // await pool.query(
+    //   "INSERT INTO leaderboard (email, points) VALUES ($1, $2)", ["stevenz9@uci.edu", 2]
+    // )
+
     const item = await pool.query(
       "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image, isResolved, isHelped) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
