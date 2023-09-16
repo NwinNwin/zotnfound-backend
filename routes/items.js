@@ -19,14 +19,35 @@ itemsRouter.post("/", async (req, res) => {
       itemDate,
       email,
       image,
+      isResolved,
+      isHelped,
     } = req.body;
 
     if (!isPositionWithinBounds(location[0], location[1])) {
       res.json("ITEM OUT OF BOUNDS (UCI ONLY)");
     }
+
+    
+
+    // await pool.query(
+    //   "INSERT INTO leaderboard (email, points) VALUES ($1, $2)", ["stevenz9@uci.edu", 2]
+    // )
+
     const item = await pool.query(
-      "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
-      [name, description, type, islost, location, date, itemDate, email, image]
+      "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image, isResolved, isHelped) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+      [
+        name,
+        description,
+        type,
+        islost,
+        location,
+        date,
+        itemDate,
+        email,
+        image,
+        isResolved,
+        isHelped,
+      ]
     );
 
     const nearbyItems = await pool.query(
@@ -110,10 +131,12 @@ itemsRouter.put("/:id", async (req, res) => {
       itemDate,
       email,
       image,
+      isResolved,
+      isHelped,
     } = req.body;
 
     const item = await pool.query(
-      "UPDATE items SET name=$1, description=$2, type=$3, islost=$4, location=$5, date=$6, itemDate=$7, email=$8, image=$9 WHERE id=$10 RETURNING *",
+      "UPDATE items SET name=$1, description=$2, type=$3, islost=$4, location=$5, date=$6, itemDate=$7, email=$8, image=$9, isResolved=$11, isHelped=$12 WHERE id=$10 RETURNING *",
       [
         name,
         description,
@@ -125,6 +148,8 @@ itemsRouter.put("/:id", async (req, res) => {
         email,
         image,
         id,
+        isResolved,
+        isHelped,
       ]
     );
 

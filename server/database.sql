@@ -10,5 +10,13 @@ CREATE TABLE items (
     itemDate VARCHAR(50),
     email VARCHAR(255),
     image VARCHAR(500),
-    islost BOOLEAN
+    islost BOOLEAN,
+    isResolved BOOLEAN,
+    isHelped BOOLEAN NULL
 );
+
+CREATE TABLE leaderboard(
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255),
+    points INTEGER
+)
