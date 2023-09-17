@@ -18,7 +18,7 @@ leaderboardRouter.post("/", async (req, res) => {
 // get all users on leaderboard (descending)
 leaderboardRouter.get("/", async (req, res) => {
   try {
-    await pool.query("SELECT * FROM leaderboard");
+    await pool.query("SELECT * FROM leaderboard ORDER BY points DESC");
   } catch (error) {
     console.log(error);
   }
