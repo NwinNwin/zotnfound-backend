@@ -27,8 +27,6 @@ itemsRouter.post("/", async (req, res) => {
       res.json("ITEM OUT OF BOUNDS (UCI ONLY)");
     }
 
-    
-
     // await pool.query(
     //   "INSERT INTO leaderboard (email, points) VALUES ($1, $2)", ["stevenz9@uci.edu", 2]
     // )
@@ -117,40 +115,15 @@ itemsRouter.get("/category/:category", async (req, res) => {
   }
 });
 
-//Update a item
+//Update a item resolve and helpfulness
 itemsRouter.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      name,
-      description,
-      type,
-      islost,
-      location,
-      date,
-      itemDate,
-      email,
-      image,
-      isResolved,
-      isHelped,
-    } = req.body;
+    const { isHelped } = req.body;
 
     const item = await pool.query(
-      "UPDATE items SET name=$1, description=$2, type=$3, islost=$4, location=$5, date=$6, itemDate=$7, email=$8, image=$9, isResolved=$11, isHelped=$12 WHERE id=$10 RETURNING *",
-      [
-        name,
-        description,
-        type,
-        islost,
-        location,
-        date,
-        itemDate,
-        email,
-        image,
-        id,
-        isResolved,
-        isHelped,
-      ]
+      "UPDATE items SET isResolved=$1, isHelped=$2 WHERE id=$3 RETURNING *",
+      [true, isHelped, id]
     );
 
     res.json(item.rows[0]);
