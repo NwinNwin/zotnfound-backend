@@ -16,11 +16,11 @@ itemsRouter.post("/", async (req, res) => {
       islost,
       location,
       date,
-      itemDate,
+      itemdate,
       email,
       image,
-      isResolved,
-      isHelped,
+      isresolved,
+      ishelped,
     } = req.body;
 
     if (!isPositionWithinBounds(location[0], location[1])) {
@@ -32,7 +32,7 @@ itemsRouter.post("/", async (req, res) => {
     // )
 
     const item = await pool.query(
-      "INSERT INTO items (name, description, type, islost, location, date, itemDate, email, image, isResolved, isHelped) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+      "INSERT INTO items (name, description, type, islost, location, date, itemdate, email, image, isresolved, ishelped) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         name,
         description,
@@ -40,11 +40,11 @@ itemsRouter.post("/", async (req, res) => {
         islost,
         location,
         date,
-        itemDate,
+        itemdate,
         email,
         image,
-        isResolved,
-        isHelped,
+        isresolved,
+        ishelped,
       ]
     );
 
@@ -119,11 +119,11 @@ itemsRouter.get("/category/:category", async (req, res) => {
 itemsRouter.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { isHelped } = req.body;
+    const { ishelped } = req.body;
 
     const item = await pool.query(
-      "UPDATE items SET isResolved=$1, isHelped=$2 WHERE id=$3 RETURNING *",
-      [true, isHelped, id]
+      "UPDATE items SET isresolved=$1, ishelped=$2 WHERE id=$3 RETURNING *",
+      [true, ishelped, id]
     );
 
     res.json(item.rows[0]);
