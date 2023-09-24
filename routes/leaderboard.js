@@ -38,16 +38,36 @@ leaderboardRouter.get("/", async (req, res) => {
 
 // update user's points
 leaderboardRouter.put("/", async (req, res) => {
+  const { email, pointsToAdd } = req.body; // Assume you're sending email and pointsToAdd in the request body
+
+  if (!email || typeof pointsToAdd !== "number") {
+    return res.status(400).send("Invalid request parameters");
+  }
+
   try {
-    await pool.query("UPDATE leaderboard SET points=100 WHERE email=$1", [
-      "test@gmail.com",
+    // First, fetch the current points of the user
+    const currentPointsResult = await pool.query(
+      "SELECT points FROM leaderboard WHERE email=$1",
+      [email]
+    );
+
+    if (currentPointsResult.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const currentPoints = currentPointsResult.rows[0].points;
+    const newPoints = currentPoints + pointsToAdd;
+
+    // Now, update the user's points in the leaderboard
+    await pool.query("UPDATE leaderboard SET points=$1 WHERE email=$2", [
+      newPoints,
+      email,
     ]);
 
-    // this could be how we udpate the points
-    // const point = await pool.query("SELECT points FROM leaderboard WHERE email=$1", ["test@gmail.com"])
-    // await pool.query("UPDATE leaderboard SET points=$1 WHERE email=$2", [point.rows[0].points, "test@gmail.com"])
+    res.send("Points updated successfully");
   } catch (err) {
     console.error(err);
+    res.status(500).send("Internal server error");
   }
 });
 
