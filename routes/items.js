@@ -1,13 +1,14 @@
 const express = require("express");
 const sendEmail = require("../utils");
 const fs = require("fs");
+const middleware = require("../middleware");
 const itemsRouter = express.Router();
 
 const pool = require("../server/db");
 const template = fs.readFileSync("./email-template/index.html", "utf-8");
 const isPositionWithinBounds = require("../util/inbound");
 //Add a item
-itemsRouter.post("/", async (req, res) => {
+itemsRouter.post("/", middleware.decodeToken, async (req, res) => {
   try {
     const {
       name,
