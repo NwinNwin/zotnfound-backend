@@ -1,10 +1,11 @@
 const express = require("express");
 const leaderboardRouter = express.Router();
+const middleware = require("../middleware");
 
 const pool = require("../server/db");
 
 // add a user to leaderboard
-leaderboardRouter.post("/", async (req, res) => {
+leaderboardRouter.post("/", middleware.decodeToken, async (req, res) => {
   try {
     const { email, points } = req.body; // Get email and points from request body
 
@@ -37,7 +38,7 @@ leaderboardRouter.get("/", async (req, res) => {
 });
 
 // update user's points
-leaderboardRouter.put("/", async (req, res) => {
+leaderboardRouter.put("/", middleware.decodeToken, async (req, res) => {
   const { email, pointsToAdd } = req.body; // Assume you're sending email and pointsToAdd in the request body
 
   if (!email || typeof pointsToAdd !== "number") {
@@ -72,7 +73,7 @@ leaderboardRouter.put("/", async (req, res) => {
 });
 
 // delete user from leaderboard
-leaderboardRouter.delete("/:id", async (req, res) => {
+leaderboardRouter.delete("/:id", middleware.decodeToken, async (req, res) => {
   try {
     const { id } = req.params; // Extract id from request body
     if (!id) {

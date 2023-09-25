@@ -50,15 +50,18 @@ itemsRouter.post("/", middleware.decodeToken, async (req, res) => {
     );
 
     const nearbyItems = await pool.query(
-      "SELECT DISTINCT email FROM items WHERE type=$1 AND islost=$2 AND email!=$3",
-      [type, !islost, email]
+      "SELECT DISTINCT email FROM leaderboard WHERE email!=$1",
+      [email]
     );
 
+    res.json(item.rows[0]); // send the response immediately after adding the item
     let contentString = "";
 
-    for (let i = 0; i < nearbyItems.rows.length; i++) {
-      let email = nearbyItems.rows[i].email;
-      contentString += `A new added item, ${name}, is near your items!`;
+    function sendDelayedEmail(index) {
+      if (index >= nearbyItems.rows.length) return;
+
+      let email = nearbyItems.rows[index].email;
+      contentString += `A new item, ${name}, is added to ZotnFound!`;
 
       const dynamicContent = {
         content: contentString,
@@ -71,12 +74,14 @@ itemsRouter.post("/", middleware.decodeToken, async (req, res) => {
         .replace("{{image}}", dynamicContent.image)
         .replace("{{url}}", dynamicContent.url);
 
-      sendEmail(email, "A nearby item was added!", customizedTemplate);
+      sendEmail(email, "A nearby item was added.", customizedTemplate);
 
       contentString = "";
+      console.log("sent " + email);
+      setTimeout(() => sendDelayedEmail(index + 1), 500);
     }
 
-    res.json(item.rows[0]);
+    sendDelayedEmail(0);
   } catch (error) {
     console.error(error);
   }
@@ -117,7 +122,7 @@ itemsRouter.get("/category/:category", async (req, res) => {
 });
 
 //Update a item resolve and helpfulness
-itemsRouter.put("/:id", async (req, res) => {
+itemsRouter.put("/:id", middleware.decodeToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { ishelped } = req.body;
@@ -134,7 +139,7 @@ itemsRouter.put("/:id", async (req, res) => {
 });
 
 //Delete a item
-itemsRouter.delete("/:id", async (req, res) => {
+itemsRouter.delete("/:id", middleware.decodeToken, async (req, res) => {
   try {
     const { id } = req.params;
     const deletedItem = await pool.query(

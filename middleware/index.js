@@ -13,6 +13,7 @@ class Middleware {
       }
       return res.json({ message: "sussy baka hehe" });
     } catch (e) {
+      console.log(e);
       return res.json({ message: "internal error" });
     }
   }
