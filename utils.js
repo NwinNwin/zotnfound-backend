@@ -7,6 +7,7 @@ const sendEmail = async (recipientEmail, subject, content) => {
     to: recipientEmail,
     subject: subject,
     html: content,
+    text: "A new item just posted on ZotnFound!",
   });
 };
 
