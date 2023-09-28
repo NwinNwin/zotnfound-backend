@@ -2,11 +2,12 @@ const createTransporter = require("./transporter");
 
 const sendEmail = async (recipientEmail, subject, content) => {
   let emailTransporter = await createTransporter();
-  await emailTransporter.sendMail({
+  emailTransporter.sendMail({
     from: process.env.EMAIL,
     to: recipientEmail,
     subject: subject,
-    html: content,
+    html: "<div>new item is posted at <a href='zotnfound.com'>check it out</a></div>",
+
     text: "A new item just posted on ZotnFound!",
   });
 };

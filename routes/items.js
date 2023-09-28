@@ -10,7 +10,7 @@ const templatePath = path.join(__dirname, "../emailTemplate/index.html");
 const template = fs.readFileSync(templatePath, "utf-8");
 const isPositionWithinBounds = require("../util/inbound");
 //Add a item
-itemsRouter.post("/", middleware.decodeToken, async (req, res) => {
+itemsRouter.post("/", async (req, res) => {
   try {
     const {
       name,
@@ -29,10 +29,6 @@ itemsRouter.post("/", middleware.decodeToken, async (req, res) => {
     if (!isPositionWithinBounds(location[0], location[1])) {
       res.json("ITEM OUT OF BOUNDS (UCI ONLY)");
     }
-
-    // await pool.query(
-    //   "INSERT INTO leaderboard (email, points) VALUES ($1, $2)", ["stevenz9@uci.edu", 2]
-    // )
 
     const item = await pool.query(
       "INSERT INTO items (name, description, type, islost, location, date, itemdate, email, image, isresolved, ishelped) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
@@ -97,6 +93,33 @@ itemsRouter.get("/", async (req, res) => {
   } catch (error) {
     console.error(error);
   }
+});
+
+itemsRouter.get("/testemail", async (req, res) => {
+  contentString = `A new added item, is near your items!`;
+
+  const dynamicContent = {
+    content: contentString,
+    image:
+      "https://i.natgeofe.com/k/ad9b542e-c4a0-4d0b-9147-da17121b4c98/MOmeow1_4x3.png",
+    url: `https://zotnfound.com/2`,
+  };
+
+  const customizedTemplate = template
+    .replace("{{content}}", dynamicContent.content)
+    .replace("{{image}}", dynamicContent.image)
+    .replace("{{url}}", dynamicContent.url);
+
+  email = [
+    "nguyenisabillionaire@gmail.com",
+    "dangnwin@gmail.com",
+    "nwinsquared@gmail.com",
+    "stevenzhouni@gmail.com",
+  ];
+  await sendEmail(email, "A nearby item was added!", customizedTemplate);
+
+  contentString = "";
+  res.json("nice");
 });
 
 //Get a item
