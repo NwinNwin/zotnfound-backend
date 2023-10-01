@@ -25,7 +25,7 @@ const createTransporter = async () => {
   });
 
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: "Gmail",
     auth: {
       type: "OAuth2",
       user: process.env.EMAIL,
