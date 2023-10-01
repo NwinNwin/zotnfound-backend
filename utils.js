@@ -6,8 +6,7 @@ const sendEmail = async (recipientEmail, subject, content) => {
     from: process.env.EMAIL,
     to: recipientEmail,
     subject: subject,
-    html: "<div>new item is posted at <a href='zotnfound.com'>check it out</a></div>",
-
+    html: content,
     text: "A new item just posted on ZotnFound!",
   });
 };
