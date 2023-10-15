@@ -8,7 +8,7 @@ const createTransporter = async () => {
   const oauth2Client = new OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"
+    process.env.REDIRECT_URI
   );
 
   oauth2Client.setCredentials({
@@ -24,7 +24,8 @@ const createTransporter = async () => {
     });
   });
 
-  const transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport(
+    {
     service: "gmail",
     auth: {
       type: "OAuth2",
@@ -35,7 +36,8 @@ const createTransporter = async () => {
       refreshToken: process.env.REFRESH_TOKEN,
     },
     from: process.env.EMAIL,
-  });
+  }
+  );
 
   return transporter;
 };
